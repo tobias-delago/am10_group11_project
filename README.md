@@ -6,7 +6,7 @@
 
 ## What is your topic?
 
-**Cracking the code to human happiness :)**
+**Cracking the code to human happiness**
 
 <p align="center">
 <i>The purpose of our life is to be happy</i>
