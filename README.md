@@ -4,7 +4,13 @@
 
 ## What is your topic?
 
-**CRACKING THE CODE TO HUMAN HAPPINESS**
+**Cracking the code to human happiness :)**
+
+<p align="center">
+<i>The purpose of our life is to be happy</i>
+~ Dalai Lama
+</p>
+
 
 ## What issues or questions are you addressing?
 
