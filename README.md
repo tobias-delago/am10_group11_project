@@ -1,10 +1,15 @@
-# AM01
+# LBS MAM 2023 Data Visualisation - Final Group Project
 
-All course files (data, code, etc.) used in AM01, September 2022
+## What is your topic?
 
-If you install the **usethis** package and type tyhe following in RStudio's console
+Text
 
-usethis::use_course("https://github.com/kostis-christodoulou/am01/archive/refs/heads/master.zip")
+## What issues or questions are you addressing?
 
+Text
 
-will allow you to download and unpack a ZIP file into a local folder of files, and open up the associated *.RProj* file, so you work inside an RStudio Project. 
+## What is the source of the data you will be using? 
+
+Text
+
+## What statistical techniques do you think you may be using?
