@@ -1,4 +1,4 @@
-# LBS MAM 2023 Data Visualisation - Group 11 Final Project
+# MAM23 Data Visualisation - Group 11 Final Project
 
 ![smiley](/images/smiley_cube.jpg)
 
