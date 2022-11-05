@@ -59,7 +59,7 @@ Within our analyses and visualisations we want to answer the following research 
 ## What is the source of the data you will be using? 
 
 We will be using two main data-sources for as basis for this project.\
-The first data-set will be an aggregation from several single datasets published by the Global Change Data Lab: https://ourworldindata.org/homicides#how-have-homicide-rates-changed-over-the-long-run-until-today.\
+The first data-set will be an aggregation from several single datasets published by the Global Change Data Lab: https://ourworldindata.org/homicides#how-have-homicide-rates-changed-over-the-long-run-until-today .\
 The second data-set is provided by the United Nations and can be accessed at: https://dataunodc.un.org/dp-intentional-homicide-victims.
 
 Furthermore, additional datasets will be added in order to enhance the informative power of this project. These variables can include e.g. unemployment rate, government system type, GDP, drug consumption, and many more. One main source for this information will be the gapminder dataset: https://www.gapminder.org/data/.
