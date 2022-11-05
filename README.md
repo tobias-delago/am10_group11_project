@@ -4,7 +4,7 @@
 
 ## What is your topic?
 
-Cracking the code to human happiness
+**CRACKING THE CODE TO HUMAN HAPPINESS**
 
 ## What issues or questions are you addressing?
 
