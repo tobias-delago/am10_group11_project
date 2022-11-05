@@ -31,4 +31,4 @@ Furthermore, additional datasets will be added in order to enhance the informati
 
 ## What statistical techniques do you think you may be using?
 
-To infer which parameters are likely to explain a specific happiness score (other than the country itself), we will determine a linear regression model with LASSO and k-fold cross-validation.
+To estimate a potential happiness score of a country in a specific year, we will determine a multiple linear regression model with LASSO and k-fold cross-validation. This model will take into account the additional parameters - without using the country name itself as a categorical variable. 
