@@ -31,4 +31,4 @@ Furthermore, additional datasets will be added in order to enhance the informati
 
 ## What statistical techniques do you think you may be using?
 
-To estimate a potential happiness score of a country, we will determine a multiple linear regression model with LASSO and k-fold cross-validation. This model will take into account the additional parameters - without using the country name itself as a categorical variable. 
+To estimate a potential happiness score of a country in a specific year, we will determine a multiple linear regression model with LASSO and k-fold cross-validation. This model will take into account the additional parameters - without using the country name itself as a categorical variable. 
