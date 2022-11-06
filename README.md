@@ -67,4 +67,4 @@ Furthermore, additional datasets will be added in order to enhance the informati
 
 ## What statistical techniques do you think you may be using?
 
-It will be a difficult task to predict homicide rates as the factors within each country are so peculiar. However, a multiple linear regression model with LASSO and k-fold cross-validation will be utilized to understand the predictory value that parameters such as continent, gdp, unemployment etc. have on the homicide rate. 
+It will be a difficult task to predict homicide rates as the factors within each country are so peculiar. However, a multiple linear regression model with LASSO and k-fold cross-validation will be utilized to understand the predictory value that parameters such as continent, gdp, unemployment etc. have on the homicide rate. In addition we have planned to use bootstrapped comparison of means between single categories. 
