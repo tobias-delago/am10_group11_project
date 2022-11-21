@@ -1,0 +1,843 @@
+---
+title: "Problem_set_1_MP"
+author: "Manon Pillot"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: flatly
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    code_folding: show
+  word_document:
+    toc: yes
+  pdf_document:
+    toc: yes
+---
+
+```{r, setup, include = FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align ="center"
+)
+```
+
+```{r, libraries, include=FALSE}
+library(tidyverse)
+library(lubridate)
+library(janitor)
+library(vroom)
+library(skimr)
+library(sf)
+library(extrafont)
+library(gapminder)
+library(ggrepel)
+library(patchwork)
+library(remotes)
+library(nycdogs)
+library(ggplot2)
+library(ggmap)
+library(gridExtra)
+library(pander)
+library(here)
+library(leaflet)
+library(tmap)
+library(tmaptools)
+library(hrbrthemes)
+library(mapview)
+library(viridis)
+library(plotly)
+library(htmlwidgets)
+library(scales)
+library(svglite)
+library(treemapify)
+library(ggalluvial)
+library(ggridges)
+library(ggthemes)
+library(packcircles)
+library(ggiraph)
+library(ggtext)
+library(gghighlight)
+library(knitr)
+library(RColorBrewer)
+library(stringr)
+library(zoo)
+library(httr)
+library(readxl)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(rgdal)
+library(rgeos)
+loadfonts(device="win")
+#library(MASS)
+# font_import()
+```
+
+# import data
+```{r, import data, include =  FALSE}
+# import world death causes data 
+data_1 <- readr::read_csv('data/annual-number-of-deaths-by-cause.csv')
+# import 15-49 age group world death causes data
+data_2 <- readr::read_csv('data/causes-of-death-in-15-49-year-olds.csv')
+# import world countries population data
+data_pop <- read_csv("data/pop.csv")
+# import world countries homicide cases amount data
+data_hm_n <- read_csv(file = "data/homicide_count.csv")
+# import world homicide rate data 
+homicide_raw <- vroom("data/homicide-rate-1990-vs-2019.csv")
+# import world continent homicide rate data
+homicide_raw_long <- vroom("data/data_countries.csv") 
+# import world bank and economic data 
+world_bank <- vroom("data/world_bank_data.csv")
+# import world happiness data & download data to temporary file
+url <- "https://happiness-report.s3.amazonaws.com/2021/DataPanelWHR2021C2.xls"
+httr::GET(url, write_disk(happiness.temp <- tempfile(fileext = ".xls")))
+# import data with information for victim and the affected age group 
+victim_age_data <- read.csv("data/data_countries_age.csv")
+# import data for intentional homicide
+intentional_homicide_data_all <- read.csv("data/data_cts_intentional_homicide.csv")
+```
+
+# Human unnatural death rank
+## Homicide is the 17th death cause in the world (2019 Data)
+```{r, world_death_causes_analysis_bar_chart1}
+# Select data needed
+graph_1 <- data_1 %>% 
+           filter(Year == "2019") %>%
+           filter(Entity == "World") %>% 
+           rename(Meningitis = `Deaths - Meningitis - Sex: Both - Age: All Ages (Number)`,
+            Dementias = `Deaths - Alzheimer's disease and other dementias - Sex: Both - Age: All Ages (Number)`,
+            "Cardiovascular diseases" = `Deaths - Cardiovascular diseases - Sex: Both - Age: All Ages (Number)`,
+            "Parkinson's disease" = `Deaths - Parkinson's disease - Sex: Both - Age: All Ages (Number)`,
+            "Nutritional deficiencies" = `Deaths - Nutritional deficiencies - Sex: Both - Age: All Ages (Number)`,
+            Malaria = `Deaths - Malaria - Sex: Both - Age: All Ages (Number)`,
+            Drowning = `Deaths - Drowning - Sex: Both - Age: All Ages (Number)`,
+            Homicide = `Deaths - Interpersonal violence - Sex: Both - Age: All Ages (Number)`,
+            "Maternal disorders" = `Deaths - Maternal disorders - Sex: Both - Age: All Ages (Number)`,
+            "HIV/AIDS" = `Deaths - HIV/AIDS - Sex: Both - Age: All Ages (Number)`,
+            "Drug use disorders" = `Deaths - Drug use disorders - Sex: Both - Age: All Ages (Number)`,
+            Tuberculosis = `Deaths - Tuberculosis - Sex: Both - Age: All Ages (Number)`,
+            "Lower respiratory infections" = `Deaths - Lower respiratory infections - Sex: Both - Age: All Ages (Number)`,
+            "Neonatal disorders" = `Deaths - Neonatal disorders - Sex: Both - Age: All Ages (Number)`,
+            "Alcohol use disorders" = `Deaths - Alcohol use disorders - Sex: Both - Age: All Ages (Number)`,
+            "Kidney disease" = `Deaths - Chronic kidney disease - Sex: Both - Age: All Ages (Number)`,
+            Suicide = `Deaths - Self-harm - Sex: Both - Age: All Ages (Number)`,
+            "Natural disasters" = `Deaths - Exposure to forces of nature - Sex: Both - Age: All Ages (Number)`,
+            "Diarrheal diseases" = `Deaths - Diarrheal diseases - Sex: Both - Age: All Ages (Number)`,
+            Heat = `Deaths - Environmental heat and cold exposure - Sex: Both - Age: All Ages (Number)`,
+            Cancers = `Deaths - Neoplasms - Sex: Both - Age: All Ages (Number)`,
+            Conflict = `Deaths - Conflict and terrorism - Sex: Both - Age: All Ages (Number)`,
+            Diabetes = `Deaths - Diabetes mellitus - Sex: Both - Age: All Ages (Number)`,
+            Poisonings = `Deaths - Poisonings - Sex: Both - Age: All Ages (Number)`,
+            Hepatitis = `Deaths - Acute hepatitis - Sex: Both - Age: All Ages (Number)`,
+            "Protein-energy malnutrition" = `Deaths - Protein-energy malnutrition - Sex: Both - Age: All Ages (Number)`,
+            "Road injuries" = `Deaths - Road injuries - Sex: Both - Age: All Ages (Number)`,
+            "Respiratory diseases" = `Deaths - Chronic respiratory diseases - Sex: Both - Age: All Ages (Number)`,
+            "Liver diseases" = `Deaths - Cirrhosis and other chronic liver diseases - Sex: Both - Age: All Ages (Number)`,
+            "Digestive diseases" = `Deaths - Digestive diseases - Sex: Both - Age: All Ages (Number)`,
+            Fire = `Deaths - Fire, heat, and hot substances - Sex: Both - Age: All Ages (Number)`) %>% 
+            select(Meningitis, "Maternal disorders", Hepatitis, Suicide, Homicide, Drowning, Malaria, Fire, Cancers, "Digestive diseases", "Liver diseases", "Alcohol use disorders", "Respiratory diseases", "Kidney disease", "Cardiovascular diseases", "Drug use disorders", "Nutritional deficiencies", "Lower respiratory infections", Diabetes, "Protein-energy malnutrition", Heat, "Diarrheal diseases", "Road injuries", Tuberculosis, "HIV/AIDS", "Parkinson's disease", "Neonatal disorders", Conflict, Poisonings, Dementias, "Natural disasters") %>% 
+            pivot_longer(everything()) %>% 
+            rename(Cause_of_Death = name,
+                   Total = value) %>% 
+            mutate(Homicide = ifelse(Cause_of_Death == "Homicide", TRUE, FALSE)) %>% 
+            slice_max(Total, n = 20)
+
+#define colours to use: grey for everything, tomato for controlled drugs
+my_colours <- c("grey80", "#CB102D")
+
+#create plot
+graph_1_svg <- ggplot(graph_1, aes(x=fct_reorder(Cause_of_Death, Total, max),
+                y = Total,
+                fill = Homicide))+
+       scale_fill_manual(values = my_colours)+
+       geom_bar(stat = "identity", show.legend = FALSE, width = 0.8)+
+       theme_minimal()+
+       scale_y_continuous(labels=comma)+
+       coord_flip()+
+  
+#labels
+  labs(x = '', 
+       y = 'Number of death')+
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y=element_text(color = "black", size = 18),
+        axis.text.x=element_text(color = "black", size = 18),
+        text=element_text(family="Roboto"),
+        legend.position = "none",
+        panel.grid.major.y = element_blank(),
+        )
+
+graph_1_svg
+
+ggsave(file="graph_1.svg", plot=graph_1_svg, width=9, height=9)
+```
+
+
+# Human unnatural death rank in 15-49 age group
+## Homicide is the N°9th death cause for people between 15 and 49 (2019 Data)
+```{r, world_death_causes_analysis_bar_chart2}
+# Select data needed
+graph_2 <- data_2 %>% 
+           filter(Year == "2019") %>%
+           filter(Entity == "World") %>%
+          rename(Hepatitis = `Deaths - Acute hepatitis - Sex: Both - Age: 15-49 years (Number)`,
+            Suicide = `Deaths - Self-harm - Sex: Both - Age: 15-49 years (Number)`,
+            Homicide = `Deaths - Interpersonal violence - Sex: Both - Age: 15-49 years (Number)`,
+            Drowning = `Deaths - Drowning - Sex: Both - Age: 15-49 years (Number)`,
+            Malaria = `Deaths - Malaria - Sex: Both - Age: 15-49 years (Number)`,
+            Fire = `Deaths - Fire, heat, and hot substances - Sex: Both - Age: 15-49 years (Number)`,
+            Cancers = `Deaths - Neoplasms - Sex: Both - Age: 15-49 years (Number)`,
+            "Digestive diseases" = `Deaths - Digestive diseases - Sex: Both - Age: 15-49 years (Number)`,
+            "Alcohol use disorders" = `Deaths - Alcohol use disorders - Sex: Both - Age: 15-49 years (Number)`,
+            "Liver diseases" = `Deaths - Cirrhosis and other chronic liver diseases - Sex: Both - Age: 15-49 years (Number)`,
+            "Respiratory diseases" = `Deaths - Chronic respiratory diseases - Sex: Both - Age: 15-49 years (Number)`,
+            "Kidney disease" = `Deaths - Chronic kidney disease - Sex: Both - Age: 15-49 years (Number)`,
+            "Cardiovascular diseases" = `Deaths - Cardiovascular diseases - Sex: Both - Age: 15-49 years (Number)`,
+            "Drug use disorders" = `Deaths - Drug use disorders - Sex: Both - Age: 15-49 years (Number)`,
+            "Nutritional deficiencies" = `Deaths - Nutritional deficiencies - Sex: Both - Age: 15-49 years (Number)`,
+            "Lower respiratory infections" = `Deaths - Lower respiratory infections - Sex: Both - Age: 15-49 years (Number)`,
+            Diabetes = `Deaths - Diabetes mellitus - Sex: Both - Age: 15-49 years (Number)`,
+            "Protein-energy malnutrition" = `Deaths - Protein-energy malnutrition - Sex: Both - Age: 15-49 years (Number)`,
+            "Natural disasters" = `Deaths - Exposure to forces of nature - Sex: Both - Age: 15-49 years (Number)`,
+            Heat = `Deaths - Environmental heat and cold exposure - Sex: Both - Age: 15-49 years (Number)`,
+            "Diarrheal diseases" = `Deaths - Diarrheal diseases - Sex: Both - Age: 15-49 years (Number)`,
+            "Road injuries" = `Deaths - Road injuries - Sex: Both - Age: 15-49 years (Number)`,
+            Tuberculosis = `Deaths - Tuberculosis - Sex: Both - Age: 15-49 years (Number)`,
+            "HIV/AIDS" = `Deaths - HIV/AIDS - Sex: Both - Age: 15-49 years (Number)`,
+            Dementias = `Deaths - Alzheimer's disease and other dementias - Sex: Both - Age: 15-49 years (Number)`,
+            "Parkinson's disease" = `Deaths - Parkinson's disease - Sex: Both - Age: 15-49 years (Number)`) %>%
+            select(Hepatitis, Suicide, Homicide, Drowning, Malaria, Fire, Cancers, "Digestive diseases", "Liver diseases", "Alcohol use disorders", "Respiratory diseases", "Kidney disease", "Cardiovascular diseases", "Drug use disorders", "Nutritional deficiencies", "Lower respiratory infections", Diabetes, "Protein-energy malnutrition", Heat, "Diarrheal diseases", "Road injuries", Tuberculosis, "HIV/AIDS", "Parkinson's disease", "Natural disasters") %>%
+            pivot_longer(everything()) %>% 
+            rename(Cause_of_Death = name,
+                   Total = value) %>% 
+            mutate(Homicide = ifelse(Cause_of_Death == "Homicide", TRUE, FALSE)) %>% 
+            slice_max(Total, n = 20)
+
+#define colours to use: grey for everything, tomato for controlled drugs
+my_colours <- c("grey80", "#CB102D")
+
+#create plot
+graph_2_svg <- ggplot(graph_2, aes(x=fct_reorder(Cause_of_Death, Total, max),
+                y = Total,
+                fill = Homicide))+
+       scale_fill_manual(values = my_colours)+
+       geom_bar(stat = "identity", show.legend = FALSE, width = 0.8)+
+       theme_minimal()+
+       scale_y_continuous(labels=comma)+
+       coord_flip()+
+  
+#labels
+  labs(x = '', 
+       y = 'Number of death')+
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y=element_text(color = "black", size = 18),
+        axis.text.x=element_text(color = "black", size = 18),
+        text=element_text(family="Roboto"),
+        legend.position = "none",
+        panel.grid.major.y = element_blank(),
+        )
+
+
+graph_2_svg
+
+ggsave(file="graph_2.svg", plot=graph_2_svg, width=9, height=9)
+```
+
+
+# Homicide amount jumps to the first place in Columbia
+## Homicide is primary cause of death for people between 15 and 49 in Colombia(2019 Data)
+```{r, world_death_causes_analysis_bar_chart3}
+# Select data needed
+graph_3 <- data_2 %>% 
+           filter(Year == "2019") %>%
+           filter(Entity == "Colombia") %>% 
+          rename(Hepatitis = `Deaths - Acute hepatitis - Sex: Both - Age: 15-49 years (Number)`,
+            Suicide = `Deaths - Self-harm - Sex: Both - Age: 15-49 years (Number)`,
+            Homicide = `Deaths - Interpersonal violence - Sex: Both - Age: 15-49 years (Number)`,
+            Drowning = `Deaths - Drowning - Sex: Both - Age: 15-49 years (Number)`,
+            Malaria = `Deaths - Malaria - Sex: Both - Age: 15-49 years (Number)`,
+            Fire = `Deaths - Fire, heat, and hot substances - Sex: Both - Age: 15-49 years (Number)`,
+            Cancers = `Deaths - Neoplasms - Sex: Both - Age: 15-49 years (Number)`,
+            "Digestive diseases" = `Deaths - Digestive diseases - Sex: Both - Age: 15-49 years (Number)`,
+            "Alcohol use disorders" = `Deaths - Alcohol use disorders - Sex: Both - Age: 15-49 years (Number)`,
+            "Liver diseases" = `Deaths - Cirrhosis and other chronic liver diseases - Sex: Both - Age: 15-49 years (Number)`,
+            "Respiratory diseases" = `Deaths - Chronic respiratory diseases - Sex: Both - Age: 15-49 years (Number)`,
+            "Kidney disease" = `Deaths - Chronic kidney disease - Sex: Both - Age: 15-49 years (Number)`,
+            "Cardiovascular diseases" = `Deaths - Cardiovascular diseases - Sex: Both - Age: 15-49 years (Number)`,
+            "Drug use disorders" = `Deaths - Drug use disorders - Sex: Both - Age: 15-49 years (Number)`,
+            "Nutritional deficiencies" = `Deaths - Nutritional deficiencies - Sex: Both - Age: 15-49 years (Number)`,
+            "Lower respiratory infections" = `Deaths - Lower respiratory infections - Sex: Both - Age: 15-49 years (Number)`,
+            Diabetes = `Deaths - Diabetes mellitus - Sex: Both - Age: 15-49 years (Number)`,
+            "Protein-energy malnutrition" = `Deaths - Protein-energy malnutrition - Sex: Both - Age: 15-49 years (Number)`,
+            "Natural disasters" = `Deaths - Exposure to forces of nature - Sex: Both - Age: 15-49 years (Number)`,
+            Heat = `Deaths - Environmental heat and cold exposure - Sex: Both - Age: 15-49 years (Number)`,
+            "Diarrheal diseases" = `Deaths - Diarrheal diseases - Sex: Both - Age: 15-49 years (Number)`,
+            "Road injuries" = `Deaths - Road injuries - Sex: Both - Age: 15-49 years (Number)`,
+            Tuberculosis = `Deaths - Tuberculosis - Sex: Both - Age: 15-49 years (Number)`,
+            "HIV/AIDS" = `Deaths - HIV/AIDS - Sex: Both - Age: 15-49 years (Number)`,
+            Dementias = `Deaths - Alzheimer's disease and other dementias - Sex: Both - Age: 15-49 years (Number)`,
+            "Parkinson's disease" = `Deaths - Parkinson's disease - Sex: Both - Age: 15-49 years (Number)`) %>% 
+            select(Hepatitis, Suicide, Homicide, Drowning, Malaria, Fire, Cancers, "Digestive diseases", "Liver diseases", "Alcohol use disorders", "Respiratory diseases", "Kidney disease", "Cardiovascular diseases", "Drug use disorders", "Nutritional deficiencies", "Lower respiratory infections", Diabetes, "Protein-energy malnutrition", "Natural disasters", Heat, "Diarrheal diseases", "Road injuries", "Tuberculosis", "HIV/AIDS", Dementias, "Parkinson's disease") %>% 
+            pivot_longer(everything()) %>% 
+            rename(Cause_of_Death = name,
+                   Total = value) %>% 
+            mutate(Homicide = ifelse(Cause_of_Death == "Homicide", TRUE, FALSE)) %>% 
+            slice_max(Total, n = 20)
+
+#define colours to use: grey for everything, tomato for controlled drugs
+my_colours <- c("grey80", "#CB102D")
+
+#create plot
+graph_3_svg <- ggplot(graph_3, aes(x=fct_reorder(Cause_of_Death, Total, max),
+                y = Total,
+                fill = Homicide))+
+       scale_fill_manual(values = my_colours)+
+       geom_bar(stat = "identity", show.legend = FALSE, width = 0.8)+
+       theme_minimal()+
+       scale_y_continuous(labels=comma)+
+       coord_flip()+
+  
+#labels
+  labs(x = '', 
+       y = 'Number of death')+
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y=element_text(color = "black", size = 18),
+        axis.text.x=element_text(color = "black", size = 18),
+        text=element_text(family="Roboto"),
+        legend.position = "none",
+        panel.grid.major.y = element_blank(),
+        )
+
+graph_3_svg
+
+ggsave(file="graph_3.svg", plot=graph_3_svg, width=9, height=9)
+```
+
+# Total word countries homicide case amount
+## Brasil has the most amount of homicide(2019 Data)
+```{r, world_homicide_amount_analysis_map1}
+# clean map and population data
+map <- ne_countries(scale = "medium", returnclass = "sf") %>%
+  dplyr::select(name, iso_a3, geometry) %>%
+  filter(!name %in% c("Antarctica"))
+data_pop<- data_pop %>% 
+  clean_names() %>% 
+  rename(country=country_name, pop=x2019, code =country_code)
+
+# left join map and pop data
+map_pop<-map %>% 
+  rename(country=name, code=iso_a3) %>% 
+  left_join(data_pop %>% 
+             select(pop,country), by ="country") %>% 
+  left_join(data_pop %>% select(pop,code), by = "code")%>% 
+  mutate(popu= if_else(is.na(pop.x),0,pop.x)+if_else(is.na(pop.y),0,pop.y) -
+           if_else((!is.na(pop.x)&!is.na(pop.y)),pop.x,0)) %>% 
+  mutate(pop = if_else(popu==0, as.numeric(NA), popu)) %>% 
+  select(-pop.x, -pop.y,-popu)
+           
+# clean word countries homicide case amount data
+data_n <-data_hm_n %>% 
+  clean_names() %>% 
+  filter(year=="2019") %>% 
+  rename(country=d)
+
+# left join it with population data 
+df_count1 <- map_pop %>% 
+  left_join(
+    data_n %>% 
+      select(country,value), by =  "country") 
+df_count2<-df_count1 %>% 
+  filter(is.na(code)==FALSE) %>% 
+  left_join(
+  data_n %>% select(code, value), by =  "code") %>% 
+  rename(value=value.y) %>% 
+  st_drop_geometry()
+df_count<- df_count1 %>% 
+  left_join(df_count2 %>% select (country,value ), by ="country") %>% 
+  mutate(value1= if_else(is.na(value.x),0,value.x+0.001)+if_else(is.na(value.y),0,value.y+0.001)   - if_else((!is.na(value.x)&!is.na(value.y)),value.x+0.001,0)) %>% 
+  mutate(value = if_else(value1==0, as.numeric(NA), round(value1))) %>% 
+  select(-value1, -value.x, -value.y)
+
+# mutate homicide rate data 
+df_rate <- df_count %>% 
+  mutate(value_rate= 100000*value/pop)
+
+# draw map for amount
+base_map <- ggplot(data = df_count) +
+  geom_sf(
+    mapping = aes(
+      geometry = geometry, #use Natural Earth World boundaries
+      fill = value
+    ),
+    colour = "#4c4c4c",      # white borders between regions
+  )+
+  scale_fill_gradient(
+    low = "#ffffff",
+    high = '#c40014',
+    na.value = "white")+
+  labs(
+    title = "", fill=""
+  )+
+  theme_void()+
+  coord_sf(crs = "+proj=robin")+
+  theme(legend.position="bottom",
+          legend.direction = "horizontal", legend.key.size = unit(0.5, "cm"),
+  legend.key.width = unit(2,"cm") )+
+  NULL
+base_map
+```
+
+# Total word countries homicide rate(peer 100000 people) in 2019
+## Venezuela owns higest homicide rate (2019 Data)
+```{r, world_homicide_rate_analysis_map2}
+# draw map for rate 
+base_map_rate <- ggplot(data = df_rate) +
+  geom_sf(
+    mapping = aes(
+      geometry = geometry, #use Natural Earth World boundaries
+      fill = value_rate 
+    ),
+     colour = "#4c4c4c",      # white borders between regions
+  )+
+  scale_fill_gradient(
+    low = "#fffbf9",
+    high = '#c40014',
+    na.value = "white")+
+  labs(
+    title = "", fill=""
+  )+
+  theme_void()+
+  coord_sf(crs = "+proj=robin")+
+  theme(legend.position="bottom",
+          legend.direction = "horizontal", legend.key.size = unit(0.5, "cm"),
+  legend.key.width = unit(2,"cm") )+
+  NULL
+
+base_map_rate
+```
+
+# 1990 vs 2019 global experience countries homicide rates compare?
+## conclusion (1990 and 2019 Data)
+```{r, countries_homicide_rate_analysis_scatter_plots}
+# clean data
+homicide_raw<- homicide_raw %>%  clean_names()
+glimpse(homicide_raw)
+
+# set filters
+years <- c(1990, 2019)
+countries <- c("GBR", "USA", "ZAF", "COL", "TUR", "SWE", "FRA")
+year_names <- c("year_1990", "year_2019", "year_1990", "year_2019", "year_1990", "year_2019", "year_1990", "year_2019",
+                "year_1990", "year_2019", "year_1990", "year_2019", "year_1990", "year_2019")
+
+# clean data
+homicide_years <- homicide_raw %>% 
+  rename(year = year_3) %>% 
+  rename(homicide_rate = deaths_interpersonal_violence_sex_both_age_age_standardized_rate_4) %>% 
+  rename(country = entity) %>% 
+  select(country, code, year, homicide_rate) %>% 
+  filter(code %in% countries) %>% 
+  filter(year %in% years) %>% 
+  mutate(year = year_names)
+
+# transpose data
+homicide_years <- homicide_years %>% 
+  pivot_wider(names_from = year, values_from = homicide_rate)
+
+# plot figure
+years_plot <- homicide_years %>% 
+  ggplot(aes(x = year_1990, y = year_2019, label = country)) +
+  geom_point(size = 3.5, alpha = 1, shape = 21, fill = "#CB102D", color = "black")+
+  geom_segment(aes(x = 0, y = 0, xend = 80, yend = 80), 
+               linetype = 2, size = 0.5, color = "black")+
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 80), size = 0.5, color = "black")+
+  geom_segment(aes(x = 0, y = 0, xend = 80, yend = 0), size = 0.5, color = "black")+
+  #geom_label_repel()+
+  theme_minimal()+
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text=element_text(color = "black", size = 18),
+        text=element_text(family="Roboto"),
+        plot.caption = element_text(color = "grey", hjust = 0, vjust = -5),
+        )
+
+years_plot
+
+# zoom on european countries
+years_plot_zoom <- homicide_years %>% 
+  ggplot(aes(x = year_1990, y = year_2019, label = country)) +
+  geom_point(size = 5, alpha = 1, shape = 21, fill = "#CB102D", color = "black")+
+  geom_segment(aes(x = 0, y = 0, xend = 2, yend = 2), 
+               linetype = 2, size = 0.5, color = "black")+
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = 2), size = 0.5, color = "black")+
+  geom_segment(aes(x = 0, y = 0, xend = 2, yend = 0), size = 0.5, color = "black")+
+  #geom_label_repel()+
+  theme_minimal()+
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text=element_text(color = "black", size = 30),
+        text=element_text(family="Roboto"),
+        plot.caption = element_text(color = "grey", hjust = 0, vjust = -5),
+        )+
+  ylim(0,2)+
+  xlim(0,2)
+
+years_plot_zoom
+
+
+ggsave(file="years.svg", plot=years_plot, width=7, height=7)
+ggsave(file="years_zoom.svg", plot=years_plot_zoom, width=7, height=7) 
+```
+
+# Crosses global experience continents homicide rates and cases amount compare
+## Conclusion ? (2019 Data)
+```{r,continents_homicide_rate_analysis_bar_charts}
+# clean data
+homicide_raw_long <-homicide_raw_long%>% 
+  clean_names()
+
+#select relevant continents
+continents <- c("Europe", "Asia", "Americas", "Oceania", "Africa")
+
+#filter all the data
+homicide_continents <- homicide_raw_long %>% 
+  filter(year == 2019) %>% 
+  filter(dimension == "Total") %>% 
+  filter(indicator == "Victims of intentional homicide") %>% 
+  filter(sex == "Total") %>% 
+  filter(age == "Total") %>% 
+  filter(region %in% continents) %>% 
+  filter(unit_of_measurement == "Counts") %>% 
+  group_by(region) %>% 
+  summarize(homicide_count = sum(value)) %>% 
+  mutate(region = fct_reorder(region, homicide_count, .desc = TRUE))
+
+#plot counts
+counts_continent_plot <- homicide_continents %>% 
+  ggplot(aes(x = region, y = homicide_count))+
+  geom_text(aes(x=region, y=homicide_count, label = homicide_count), size = 6, vjust = -1)+
+  geom_col(fill = "#CB102D", width = 0.08)+
+  theme_minimal()+
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y=element_blank(),
+        axis.text.x=element_text(color = "black", size = 18),
+        text=element_text(family="Roboto"),
+        panel.grid = element_blank(),
+        plot.caption = element_text(color = "grey", hjust = 0, vjust = -5),
+        )+
+  ylim(0,150000)
+
+counts_continent_plot
+
+# add population per continent and calculate rate
+homicide_continents_prop <- homicide_continents %>% 
+  mutate(population = c(1340598147, 1022831978, 4641054775, 747636026, 43111704)) %>% 
+  mutate(homicide_rate = homicide_count/population * 1000000) %>% 
+  mutate(region = fct_reorder(region, homicide_count, .desc = TRUE))
+  
+
+# plot it
+
+rate_continent_plot <- homicide_continents_prop %>% 
+  ggplot(aes(x = region, y = homicide_rate))+
+  geom_col(fill = "#CB102D", width = 0.08)+
+  geom_text(aes(x=region, y=homicide_rate, label = round(homicide_rate,0)), size = 6, vjust = -1)+
+  theme_minimal()+
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y=element_blank(),
+        axis.text.x=element_text(color = "black", size = 18),
+        text=element_text(family="Roboto"),
+        panel.grid = element_blank(),
+        plot.caption = element_text(color = "grey", hjust = 0, vjust = -5),
+        )+
+  ylim(0,145)
+
+rate_continent_plot
+
+ggsave(file="count.svg", plot=counts_continent_plot, width=8, height=4)
+ggsave(file="rate.svg", plot=rate_continent_plot, width=8, height=4)
+
+```
+
+
+# Flow Chart and GE comparison in gender 
+## Conclusion (2019 Data)
+```{r, countries_homicide_rate_analysis_in_gender_table}
+# Calculate summary statistics for graph
+genders <- c("Female", "Male")
+
+# calculate count by gender
+gender_all <- homicide_raw_long %>% 
+  filter(year == 2019) %>% 
+  filter(dimension == "Total") %>% 
+  filter(indicator == "Victims of intentional homicide") %>% 
+  filter(sex %in% genders) %>% 
+  filter(age == "Total") %>% 
+  filter(region %in% continents) %>% 
+  filter(unit_of_measurement == "Counts") %>% 
+  group_by(sex) %>% 
+  summarize(homicide_count = sum(value))
+
+# print proportion
+percentage_all <- gender_all[1,2]/(gender_all[1,2]+gender_all[2,2]) 
+
+percentage_all %>% 
+  rename(proportion_female = homicide_count)
+
+# calculate count by gender for family member
+gender_family <- homicide_raw_long %>% 
+  filter(year == 2019) %>% 
+  filter(dimension == "by relationship to perpetrator") %>% 
+  filter(category == "Intimate partner or family member") %>% 
+  filter(indicator == "Victims of intentional homicide") %>% 
+  filter(sex %in% genders) %>% 
+  filter(age == "Total") %>% 
+  filter(region %in% continents) %>% 
+  filter(unit_of_measurement == "Counts") %>% 
+  group_by(sex) %>% 
+  summarize(homicide_count = sum(value))
+
+# print proportion
+percentage_all <- gender_family[1,2]/(gender_family[1,2]+gender_family[2,2]) 
+
+percentage_all %>% 
+  rename(proportion_female_family = homicide_count)
+
+# calculate same metrics for selected countries
+gender_colombia <- homicide_raw_long %>% 
+  filter(year == 2019) %>%
+  filter(country == "Colombia") %>% 
+  filter(dimension == "Total") %>% 
+  filter(indicator == "Victims of intentional homicide") %>% 
+  filter(sex %in% genders) %>% 
+  filter(age == "Total") %>% 
+  filter(unit_of_measurement == "Counts") %>% 
+  group_by(sex) %>% 
+  summarize(homicide_count = sum(value))
+
+# print proportion
+percentage_colombia <- gender_colombia[1,2]/(gender_colombia[1,2]+gender_colombia[2,2]) 
+
+percentage_colombia %>% 
+  rename(proportion_female_colombia = homicide_count)
+
+
+# calculate same metrics for selected countries
+gender_sweden <- homicide_raw_long %>% 
+  filter(year == 2019) %>%
+  filter(country == "Sweden") %>% 
+  filter(dimension == "Total") %>% 
+  filter(indicator == "Victims of intentional homicide") %>% 
+  filter(sex %in% genders) %>% 
+  filter(age == "Total") %>% 
+  filter(unit_of_measurement == "Counts") %>% 
+  group_by(sex) %>% 
+  summarize(homicide_count = sum(value))
+
+# print proportion
+percentage_sweden <- gender_sweden[1,2]/(gender_sweden[1,2]+gender_sweden[2,2]) 
+
+percentage_sweden %>% 
+  rename(proportion_female_sweden = homicide_count)
+
+# Create variables for homicide rate country/age group
+rate_colombia_49 <- 58.6 
+rate_sweden_49 <- 1.53
+
+# Calculate rate male in Colombia
+rate_gian <- rate_colombia_49*2*9/10 #proportion calculation
+rate_gian
+
+# Calculate rate female in Sweden
+rate_vivian <- rate_sweden_49*2*1/5 #proportion calculation
+rate_vivian
+```
+
+# Prediction
+## conclusion?
+```{r,homicide_rate_feasibility_analysis_models&fit_graph}
+# clean world bank data ------------------------
+world_bank <-world_bank %>%   
+  janitor::clean_names() %>% 
+  mutate(value = as.double(value)) %>% 
+  filter(series_name == "GDP per capita (current US$)") %>% 
+  dplyr::select(code, value)
+
+# Use read_excel to read world happiness data as dataframe
+world_happiness <- read_excel(happiness.temp,
+                    sheet = "Sheet1",
+                    range = cell_cols("A:K")) %>% 
+  janitor::clean_names()
+world_happiness <- world_happiness %>% 
+  filter(year == 2019)
+
+# filter for 2019
+homicide_linear <- homicide_raw %>% 
+  rename(year = year_3) %>% 
+  rename(homicide_rate = deaths_interpersonal_violence_sex_both_age_age_standardized_rate_4) %>% 
+  rename(country = entity) %>% 
+  select(country, code, year, homicide_rate) %>% 
+  filter(year == 2019) %>% 
+  filter(!is.na(code))
+
+# joining tables
+homicide_happiness <- inner_join(homicide_linear, world_happiness, by = c("country" = "country_name"))
+homicide_happiness <- homicide_happiness %>% 
+  select(-year.x, -year.y, -positive_affect, -negative_affect)
+
+homicide_happiness_gdp <- inner_join(homicide_happiness, world_bank, by = "code")
+
+homicide_happiness_gdp <- homicide_happiness_gdp %>% 
+  rename(gdp_percap = value)
+
+# own model
+model_happiness <- lm(homicide_rate ~ life_ladder, data = homicide_happiness_gdp)
+summary(model_happiness)
+
+reduced <- homicide_happiness_gdp %>%
+  dplyr::select(-life_ladder,-country, -code)
+
+reduced<-na.omit(reduced)
+
+model <- lm(homicide_rate ~ healthy_life_expectancy_at_birth + social_support + 
+              freedom_to_make_life_choices + generosity+gdp_percap, data = reduced)
+summary(model)
+
+# optimizer blended out as package has same selection method
+#full.model <- lm(homicide_rate ~., data = reduced)
+#step.model <- stepAIC(full.model, direction = "both", 
+                      #trace = FALSE)
+#summary(step.model)
+
+happiness <- homicide_happiness_gdp %>% 
+  ggplot(aes(x = life_ladder, y = homicide_rate)) +
+  geom_point()+
+  geom_smooth(method="lm", se = F, color = "#CB102D")+
+  theme_minimal()+
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text=element_text(color = "black", size = 12),
+        text=element_text(family="Roboto"),
+        plot.caption = element_text(color = "grey", hjust = 0, vjust = -5),
+        )
+
+happiness
+  
+ggsave(file="happiness.svg", plot=happiness, width=8, height=5)
+```
+
+# Homicide death amount in age group
+## conclusion
+```{r, world_homicide_cases_amount_analysis_age_group_bar_chart}
+# clean & filter the data for victim and the affected age group and rename columns
+victim_age_data <- victim_age_data %>%
+                      janitor::clean_names() %>% 
+                    # rename required columns
+                      rename('above 70' = deaths_interpersonal_violence_sex_both_age_70_years_number,
+                             "50 - 69" = deaths_interpersonal_violence_sex_both_age_50_69_years_number,
+                             "15 - 49" = deaths_interpersonal_violence_sex_both_age_15_49_years_number,
+                             "5 - 14" = deaths_interpersonal_violence_sex_both_age_5_14_years_number,
+                             "under 5" = deaths_interpersonal_violence_sex_both_age_under_5_number ) %>% 
+                    #filter for 2019 data
+                    filter(year=="2019")
+
+# plot to depict the cases of homicide within each age group around the world in 2019 
+victim_age_data_long <- victim_age_data %>% pivot_longer(
+                                cols = 4:8,
+                                names_to = "age_group",
+                                values_to = "count"
+                              )
+
+victim_age_data_long %>% 
+  mutate(proportion = count/sum(count)) %>% 
+  mutate(age_group=fct_reorder(age_group, proportion)) %>% 
+  ggplot(mapping = aes(x=age_group, y=proportion, fill=age_group)) +
+  geom_col()+
+  theme_bw()+
+  scale_fill_brewer(palette = "OrRd")
+
+```
+
+# Homicide death amount in age group 2
+## conclusion??
+```{r, world_homicide_cases_amount_analysis_age_group_ball_chart}
+# Create data
+data_vic <- victim_age_data_long %>% 
+  group_by(age_group) %>% 
+  summarise(count = sum(count))
+
+# Add a column with the text you want to display for each bubble:
+data_vic$text <- paste("name: ",data_vic$age_group, "\n", "value:", data_vic$count, "\n", "You can add a story here!")
+
+# Generate the layout
+packing <- circleProgressiveLayout(data_vic$count, sizetype='area')
+data_vic <- cbind(data_vic, packing)
+dat.gg <- circleLayoutVertices(packing, npoints=50)
+
+# Make the plot with a few differences compared to the static version:
+p <- ggplot() + 
+  geom_polygon_interactive(data = dat.gg, aes(x,y,group = id, fill=id,tooltip = data_vic$text[id], data_id = id),colour = "black", alpha = 0.6) +
+  scale_fill_viridis() +
+  geom_text(data = data_vic, aes(x, y, label = gsub("Group_", "", age_group)), size=4, color="black") +
+  theme_void() + 
+  theme(legend.position="none", plot.margin=unit(c(0,0,0,0),"cm") ) + 
+  coord_equal()+
+  theme_bw()+
+   theme(legend.position = "none") 
+
+p
+
+```
+
+# Gender and relationship in world homicide
+## Conclusion?
+```{r, world_homicide_cases_amount_analysis_gender&relationship_bar_chart1}
+# clean & filter the data for intentional homicide
+intentional_homicide_data <- intentional_homicide_data_all %>%
+                                      janitor::clean_names() %>% 
+  #keeping only count data
+                                      filter(unit_of_measurement=="Counts") %>% 
+  #removing unknown and combined data
+                                      filter(sex == c("Female","Male")) %>% 
+  #keeping only overall age data 
+                                      filter(age=="Total") %>% 
+  #filter for 2019 data
+                                      filter(year=="2019")
+
+
+# plot to depict homicide share among men and women around the world in 2019
+intentional_homicide_data %>% 
+  mutate(proportion = value/sum(value)) %>% 
+  mutate(sex=fct_reorder(sex, proportion)) %>% 
+  ggplot(mapping = aes(x=sex, y=proportion, fill=sex)) +
+  geom_col()+
+  theme_bw()+
+  scale_fill_brewer(palette = "OrRd")
+
+```
+
+```{r, world_homicide_cases_amount_analysis_gender&relationship_bar_chart2}
+# plot to depict homicide share among men and women around the world in 2019 due to partner or family related homicides
+intentional_homicide_data %>% 
+  filter(category==c("Intimate partner or family member" ,"Intimate partner or family member: Family member" )) %>% 
+  mutate(proportion = value/sum(value)) %>% 
+  #mutate(sex=fct_reorder(sex, proportion)) %>% 
+  ggplot(mapping = aes(x=sex, y=proportion, fill=sex)) +
+  geom_col()+
+  theme_bw()+
+  scale_fill_brewer(palette = "OrRd")
+```
