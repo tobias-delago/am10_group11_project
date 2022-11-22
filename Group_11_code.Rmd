@@ -581,12 +581,46 @@ rate_continent_plot <- homicide_continents_prop %>%
 
 rate_continent_plot
 
+# Save files
 ggsave(file="count.svg", plot=counts_continent_plot, width=8, height=4)
 ggsave(file="rate.svg", plot=rate_continent_plot, width=8, height=4)
 
+
+# Boxplots for distribution
+
+homicide_continents_box <- homicide_raw_long %>% 
+  filter(year == 2019) %>% 
+  filter(dimension == "Total") %>% 
+  filter(indicator == "Victims of intentional homicide") %>% 
+  filter(sex == "Total") %>% 
+  filter(age == "Total") %>% 
+  filter(region %in% continents) %>% 
+  filter(unit_of_measurement == "Rate per 100,000 population") 
+
+box_rate <- homicide_continents_box %>% 
+  ggplot(aes(x = reorder(region, -value, FUN = median), y = value)) +
+  geom_boxplot(width = 0.5)+
+  theme_minimal()+
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.x=element_text(color = "black", size = 18),
+        axis.text.y=element_text(color = "black", size = 15),
+        text=element_text(family="Roboto"),
+        panel.grid.major.x = element_blank(),
+        )
+
+box_rate
+
+ggsave(file="box.svg", plot=box_rate, width=9, height=3.7)
+
+  #group_by(region) %>% 
+  #summarize(homicide_count = sum(value)) %>% 
+  #mutate(region = fct_reorder(region, homicide_count, .desc = TRUE))
+
+
 ```
 
-# Flow Chart and GE comparison in gender
+# Calculaton for Global experience countries comparison in gender 
 
 ## Conclusion (2019 Data)
 
