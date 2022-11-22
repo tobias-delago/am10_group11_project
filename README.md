@@ -22,7 +22,7 @@ We have used the following datasources for our analysis:
 - Global Change Data Lab Homicide Data: https://ourworldindata.org/homicides
 - Happiness Indicators: https://worldhappiness.report/archive/
 - Development Indicators: https://databank.worldbank.org/source/world-development-indicators
-- 
+
 
 ## What statistical techniques do you think you may be using?
 
