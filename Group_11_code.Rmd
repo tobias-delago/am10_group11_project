@@ -84,7 +84,7 @@ loadfonts(device="win")
 ```
 
 # import data
-```{r, import data, include =  FALSE}
+```{r, import data}
 # import world death causes data 
 data_1 <- readr::read_csv('data/annual-number-of-deaths-by-cause.csv')
 # import 15-49 age group world death causes data
@@ -705,7 +705,7 @@ homicide_happiness_gdp <- homicide_happiness_gdp %>%
   rename(gdp_percap = value)
 
 # own model
-model_happiness <- lm(homicide_rate ~ life_ladder, data = homicide_happiness_gdp)
+model_happiness <- lm(log1p(homicide_rate) ~ life_ladder, data = homicide_happiness_gdp)
 summary(model_happiness)
 
 reduced <- homicide_happiness_gdp %>%
