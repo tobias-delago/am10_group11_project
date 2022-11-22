@@ -1,6 +1,6 @@
 # MAM23 Data Visualisation - Group 11 Final Project
 
-# Topic: HOMICIDE - A CONCERN ACROSS DEMOGRAPHY ?
+# HOMICIDE - A CONCERN ACROSS DEMOGRAPHY ?
 
 ![killer](/images/homicide.jpg)
 
