@@ -111,7 +111,7 @@ intentional_homicide_data_all <- read.csv("data/data_cts_intentional_homicide.cs
 
 # Human unnatural death rank
 
-## Homicide is the 17th death cause in the world (2019 Data)
+## Homicide is the 17th death cause in the world
 
 ```{r, world_death_causes_analysis_bar_chart1}
 # Select data needed
@@ -188,7 +188,7 @@ ggsave(file="graph_1.svg", plot=graph_1_svg, width=9, height=9)
 
 # Human unnatural death rank in 15-49 age group
 
-## Homicide is the N°9th death cause for people between 15 and 49 (2019 Data)
+## Homicide plays more part in death cause in 15 and 49 age group
 
 ```{r, world_death_causes_analysis_bar_chart2}
 # Select data needed
@@ -261,7 +261,7 @@ ggsave(file="graph_2.svg", plot=graph_2_svg, width=9, height=9)
 
 # Homicide amount jumps to the first place in Columbia
 
-## Homicide is primary cause of death for people between 15 and 49 in Colombia(2019 Data)
+## Homicide is primary cause of death for people between 15 and 49 in Colombia
 
 ```{r, world_death_causes_analysis_bar_chart3}
 # Select data needed
@@ -333,7 +333,7 @@ ggsave(file="graph_3.svg", plot=graph_3_svg, width=9, height=9)
 
 # Total word countries homicide case amount
 
-## Brasil has the most amount of homicide(2019 Data)
+## Brasil has the most amount of homicide
 
 ```{r, world_homicide_amount_analysis_map1}
 # clean map and population data
@@ -409,7 +409,7 @@ base_map
 
 # Total word countries homicide rate(peer 100000 people) in 2019
 
-## Venezuela owns higest homicide rate (2019 Data)
+## Venezuela owns higest homicide rate 
 
 ```{r, world_homicide_rate_analysis_map2}
 # draw map for rate 
@@ -438,9 +438,9 @@ base_map_rate <- ggplot(data = df_rate) +
 base_map_rate
 ```
 
-# 1990 vs 2019 global experience countries homicide rates compare?
+# 1990 vs 2019 global experience countries homicide rates compare
 
-## conclusion (1990 and 2019 Data)
+## Homicide rate decreased in ge countries, but a major gaps still exist among countries
 
 ```{r, countries_homicide_rate_analysis_scatter_plots}
 # clean data
@@ -514,7 +514,7 @@ ggsave(file="years_zoom.svg", plot=years_plot_zoom, width=7, height=7)
 
 # Crosses global experience continents homicide rates and cases amount compare
 
-## Conclusion ? (2019 Data)
+## The Americas are the continent with most homicides, follows by Africa 
 
 ```{r,continents_homicide_rate_analysis_bar_charts}
 # clean data
@@ -622,8 +622,7 @@ ggsave(file="box.svg", plot=box_rate, width=9, height=3.7)
 
 # Calculaton for Global experience countries comparison in gender 
 
-## Conclusion (2019 Data)
-
+## Female victims account 20% of all homicides, but 50%+ for relationship homicides
 ```{r, countries_homicide_rate_analysis_in_gender_table}
 # Calculate summary statistics for graph
 genders <- c("Female", "Male")
@@ -715,9 +714,9 @@ rate_vivian <- rate_sweden_49*2*1/5 #proportion calculation
 rate_vivian
 ```
 
-# Prediction
+# Prediction homicide rate 
 
-## conclusion?
+## Lack statistic significant evident to support homicide prediction
 
 ```{r,homicide_rate_feasibility_analysis_models&fit_graph}
 # clean world bank data ------------------------
@@ -792,7 +791,7 @@ ggsave(file="happiness.svg", plot=happiness, width=8, height=5)
 
 # Homicide death amount in age group
 
-## conclusion
+## Homicide mainly occurs in 15-49 age group
 
 ```{r, world_homicide_cases_amount_analysis_age_group_bar_chart}
 # clean & filter the data for victim and the affected age group and rename columns
@@ -826,7 +825,7 @@ victim_age_data_long %>%
 
 # Homicide death amount in age group 2
 
-## conclusion??
+## Homicide mainly occurs in 15-49 age group
 
 ```{r, world_homicide_cases_amount_analysis_age_group_ball_chart}
 # Create data
@@ -857,9 +856,9 @@ p
 
 ```
 
-# Gender and relationship in world homicide
+# Homicide in gender and relationship 
 
-## Conclusion?
+## Homicide mainly occurs in male, but occours more in female in relationship homicides
 
 ```{r, world_homicide_cases_amount_analysis_gender&relationship_bar_chart1}
 # clean & filter the data for intentional homicide
