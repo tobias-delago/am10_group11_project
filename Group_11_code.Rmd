@@ -441,7 +441,7 @@ base_map <- ggplot(data = df_count) +
 base_map
 ```
 
-### Total word countries homicide rate(peer 100000 people) in 2019
+### Total word countries homicide rate(per 100000 people) in 2019
 
 ```{r, world_homicide_rate_analysis_map2}
 # draw map for rate 
