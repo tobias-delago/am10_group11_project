@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' class='svglite' width='576.00pt' height='288.00pt' viewBox='0 0 576.00 288.00'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+    .svglite text {
+      white-space: pre;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: none;'/>
+<defs>
+  <clipPath id='cpMC4wMHw1NzYuMDB8MC4wMHwyODguMDA='>
+    <rect x='0.00' y='0.00' width='576.00' height='288.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw1NzYuMDB8MC4wMHwyODguMDA=)'>
+</g>
+<defs>
+  <clipPath id='cpOC4yMnw1NzAuNTJ8NS40OHwyNjAuOTE='>
+    <rect x='8.22' y='5.48' width='562.30' height='255.43' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpOC4yMnw1NzAuNTJ8NS40OHwyNjAuOTE=)'>
+<text x='181.23' y='123.05' text-anchor='middle' style='font-size: 17.07px; font-family: "Arial";' textLength='47.45px' lengthAdjust='spacingAndGlyphs'>73659</text>
+<text x='73.10' y='31.76' text-anchor='middle' style='font-size: 17.07px; font-family: "Arial";' textLength='56.94px' lengthAdjust='spacingAndGlyphs'>132630</text>
+<text x='289.37' y='146.17' text-anchor='middle' style='font-size: 17.07px; font-family: "Arial";' textLength='47.45px' lengthAdjust='spacingAndGlyphs'>58726</text>
+<text x='397.50' y='211.54' text-anchor='middle' style='font-size: 17.07px; font-family: "Arial";' textLength='47.45px' lengthAdjust='spacingAndGlyphs'>16499</text>
+<text x='505.64' y='236.51' text-anchor='middle' style='font-size: 17.07px; font-family: "Arial";' textLength='28.47px' lengthAdjust='spacingAndGlyphs'>364</text>
+<rect x='176.91' y='135.27' width='8.65' height='114.03' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #CB102D;' />
+<rect x='68.77' y='43.98' width='8.65' height='205.32' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #CB102D;' />
+<rect x='285.04' y='158.39' width='8.65' height='90.91' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #CB102D;' />
+<rect x='393.18' y='223.76' width='8.65' height='25.54' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #CB102D;' />
+<rect x='501.31' y='248.73' width='8.65' height='0.56' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #CB102D;' />
+</g>
+<g clip-path='url(#cpMC4wMHw1NzYuMDB8MC4wMHwyODguMDA=)'>
+<text x='73.10' y='278.73' text-anchor='middle' style='font-size: 18.00px; font-family: "Arial";' textLength='75.01px' lengthAdjust='spacingAndGlyphs'>Americas</text>
+<text x='181.23' y='278.73' text-anchor='middle' style='font-size: 18.00px; font-family: "Arial";' textLength='46.01px' lengthAdjust='spacingAndGlyphs'>Africa</text>
+<text x='289.37' y='278.73' text-anchor='middle' style='font-size: 18.00px; font-family: "Arial";' textLength='35.01px' lengthAdjust='spacingAndGlyphs'>Asia</text>
+<text x='397.50' y='278.73' text-anchor='middle' style='font-size: 18.00px; font-family: "Arial";' textLength='58.03px' lengthAdjust='spacingAndGlyphs'>Europe</text>
+<text x='505.64' y='278.73' text-anchor='middle' style='font-size: 18.00px; font-family: "Arial";' textLength='67.03px' lengthAdjust='spacingAndGlyphs'>Oceania</text>
+</g>
+</svg>
